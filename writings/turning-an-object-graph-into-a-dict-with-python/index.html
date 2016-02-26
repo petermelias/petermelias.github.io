@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+
+<html><head><meta charset="utf-8" /><meta content="width=device-width, initial-scale=1.0" name="viewport" /><link href="/apple-touch-icon-57x57.png" rel="apple-touch-icon" sizes="57x57" /><link href="/apple-touch-icon-60x60.png" rel="apple-touch-icon" sizes="60x60" /><link href="/apple-touch-icon-72x72.png" rel="apple-touch-icon" sizes="72x72" /><link href="/apple-touch-icon-76x76.png" rel="apple-touch-icon" sizes="76x76" /><link href="/apple-touch-icon-114x114.png" rel="apple-touch-icon" sizes="114x114" /><link href="/apple-touch-icon-120x120.png" rel="apple-touch-icon" sizes="120x120" /><link href="/apple-touch-icon-144x144.png" rel="apple-touch-icon" sizes="144x144" /><link href="/apple-touch-icon-152x152.png" rel="apple-touch-icon" sizes="152x152" /><link href="/apple-touch-icon-180x180.png" rel="apple-touch-icon" sizes="180x180" /><link href="/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png" /><link href="/android-chrome-192x192.png" rel="icon" sizes="192x192" type="image/png" /><link href="/favicon-96x96.png" rel="icon" sizes="96x96" type="image/png" /><link href="/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png" /><link href="manifest.json" rel="manifest" /><link color="#5bbad5" href="/safari-pinned-tab.svg" rel="mask-icon" /><meta content="#da532c" name="msapplication-TileColor" /><meta content="/mstile-144x144.png" name="msapplication-TileImage" /><meta content="#ffffff" name="theme-color" /><link href="/bundles/28a3f0024957/all.min.css" rel="stylesheet" /><link href="https://fonts.googleapis.com/css?family=Lato:400,300,400italic,700,900" rel="stylesheet" type="text/css" /><link href="https://fonts.googleapis.com/css?family=Quicksand:400,700" rel="stylesheet" type="text/css" /><link href="https://fonts.googleapis.com/css?family=Josefin+Sans:400,700italic,700,600italic,600,400italic,300italic,300" rel="stylesheet" type="text/css" /><script src="/bundles/8181a25eaea5/all.min.js"></script><script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+              ga('create', 'UA-22539794-3', 'auto');
+              ga('send', 'pageview');</script><title>Peter M. Elias - Full Stack Developer</title></head><body><section class="l-header"><article class="header-mini"><article class="header-mini__content"><a href="/"></a><h6 class="header-mini__title">P<span class="header-mini__red">M</span>E</h6><h5 class="header-mini__current-page">writing</h5></article></article></section><section class="l-main" id="main"><section class="l-navigation"><article class="navlist" id="navlist"><article class="spin-button" id="navlist-expand"><span class="spin-button__icon"></span></article><ul class="navlist__list" id="navlist-list"><li class="navlist__item  "><a href="/portfolio">portfolio</a></li><li class="navlist__item  active"><a href="/writings">writings</a></li><li class="navlist__item  "><a href="/hire-me">hiring me</a></li><li class="navlist__item  "><a href="/about">about me</a></li><li class="navlist__item  "><a href="https://www.github.com/petermelias" target="_blank">github</a></li></ul></article></section><section class="l-page"><section class="writing"><h5>Using Python to Make a Dict out of an Object Graph</h5><p>First let's just clarify with an example of an object graph.</p>
+<pre><code class="codehilite"><span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">B</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="k">pass</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">B</span><span class="p">()</span>
+<span class="n">x</span><span class="o">.</span><span class="n">other</span> <span class="o">=</span> <span class="n">y</span>
+</code></pre><p>That would an object graph with two nodes, A and B.</p><p>The <code>x</code> instance of <code>A</code> has a reference to the <code>y</code> instance of <code>B</code>.</p><p>We can attach some arbitrary data to these nodes:</p>
+<pre><code class="codehilite"><span class="n">x</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s">"Jack"</span>
+<span class="n">y</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s">"Chloe"</span>
+</code></pre><p>What we want is to be able to quickly transform this graph (and the data on its nodes) into a dictionary data structure.</p><p>From <code>Jack</code>'s perspective, that would look like this:</p>
+<pre><code class="codehilite"><span class="p">{</span>
+  <span class="s">'name'</span><span class="p">:</span> <span class="s">'Jack'</span><span class="p">,</span>
+  <span class="s">'other'</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s">'name'</span><span class="p">:</span> <span class="s">'Chloe'</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre><p>Now there could be more to this, like <code>Jack</code> might have a list of <code>Chole</code>'s...</p>
+<pre><code class="codehilite"><span class="p">{</span>
+  <span class="s">'name'</span><span class="p">:</span> <span class="s">'Jack'</span><span class="p">,</span>
+  <span class="s">'others'</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s">'name'</span><span class="p">:</span> <span class="s">'Chloe'</span><span class="p">},</span> <span class="p">{</span><span class="s">'name'</span><span class="p">:</span> <span class="s">'Chloe2'</span><span class="p">}</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</code></pre><p>The biggest concern is circular references.</p>
+<pre><code class="codehilite"><span class="n">y</span><span class="o">.</span><span class="n">my_jack</span> <span class="o">=</span> <span class="n">x</span>
+
+<span class="p">{</span>
+  <span class="s">'name'</span><span class="p">:</span> <span class="s">'Jack'</span><span class="p">,</span>
+  <span class="s">'other'</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s">'name'</span><span class="p">:</span> <span class="s">'Chloe'</span><span class="p">,</span>
+    <span class="s">'my_jack'</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s">'name'</span><span class="p">:</span> <span class="s">'Jack'</span> <span class="c"># Dammit.</span>
+      <span class="s">'other'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">'name'</span><span class="p">:</span> <span class="s">'Chloe'</span> <span class="c"># Where's Tony?</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre><p>... and so forth. The point is this gets complex quickly.</p><p>So we need a few functions...</p><p>1) Check if node is a collection</p>
+<pre><code class="codehilite"><span class="n">_iterable_types</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="nb">tuple</span><span class="p">,</span>
+    <span class="nb">list</span><span class="p">,</span>
+    <span class="nb">set</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_is_collection</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+    <span class="n">node_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">node_type</span> <span class="ow">in</span> <span class="n">_iterable_types</span> <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="s">'__iter__'</span><span class="p">)</span>
+</code></pre><p>2) Check if node is a dict or "dict-like"</p>
+<pre><code class="codehilite"><span class="k">def</span> <span class="nf">_is_dict_like</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+    <span class="n">node_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">node_type</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,)</span>
+</code></pre><p>3) Check if node is traversable (linked to another node)</p>
+<pre><code class="codehilite"><span class="k">def</span> <span class="nf">_is_traversable</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="s">'to_dict'</span><span class="p">)</span>
+</code></pre><p>We implement this as a check for a traversable interface called <code>to_dict</code> but really this is entirely up to the implementation of your particular "graph" structure.</p><p>4) And finally check if a node is a circular reference</p>
+<pre><code class="codehilite"><span class="k">class</span> <span class="nc">Circular</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">def</span> <span class="nf">_is_circular</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">Circular</span><span class="p">)</span>
+</code></pre><p>The use of the class will become evident shortly.</p><p>Now we can write our recursive graph traversal and transformation function!</p>
+<pre><code class="codehilite"><span class="k">def</span> <span class="nf">to_dict_recursive</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">last_node</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">paths</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">paths</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">paths</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="n">_is_dict_like</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+        <span class="n">new_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">to_dict_recursive</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">last_node</span><span class="p">,</span> <span class="n">paths</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">_is_circular</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">new_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
+
+        <span class="k">return</span> <span class="n">new_dict</span>
+
+    <span class="k">if</span> <span class="n">_is_collection</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+        <span class="n">new_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">node</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">to_dict_recursive</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">last_node</span><span class="p">,</span> <span class="n">paths</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">_is_circular</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">new_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">new_list</span>
+
+    <span class="k">if</span> <span class="n">_is_traversable</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+        <span class="n">node_id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="n">last_node_id</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="k">if</span> <span class="n">last_node</span><span class="p">:</span>
+            <span class="n">last_node_id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">(</span><span class="n">last_node</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">last_node_id</span> <span class="ow">in</span> <span class="n">paths</span> <span class="ow">and</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">[</span><span class="n">last_node_id</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="n">Circular</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">node_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
+                <span class="n">paths</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
+
+            <span class="n">paths</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span> <span class="o">+=</span> <span class="p">(</span><span class="n">last_node_id</span><span class="p">,)</span>
+
+        <span class="n">node_dict</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">to_dict_recursive</span><span class="p">(</span><span class="n">node_dict</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">paths</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">node</span>
+</code></pre><p>So it's a bit of a chunk but it's fairly straight forward and broken down into pretty clear sections.</p><p>First we check if the current <code>node</code> is a <code>dict</code> and if it is we iterate its key value pairs and recurse the function onto each one of them and copy the result into a new dict which we return.</p><p>You must take note that we DO NOT copy the result of it comes back as a circular reference. This is essentially one of our base cases for those of you who are familiar with recursive algorithm lingo.</p><p>Next, the simplest part, we check for a collection and recurse on its members. Same circular check, also a base case.</p><p>Finally, we check for a connection to another node and we use the memory id (<code>id</code> function in Python) to do our circular reference detection.</p><p>The <code>paths</code> parameter is basically a list of tuples that tracks the subtrees of the graph and tells us when we are caught in a loop within a subtree by realizing that the current node is attempting to loop back on the subtree of the previous node. When it detects this, it returns the instance of the <code>Circular</code> class we use to inform further calls that this is the end of the road for that path. This is also essentially a base case.</p><p>The last step of course is merely to return the node itself as this is how our primitive values actually make it into their respective attributes and containers.</p><p>As with most recursive algorithms the time-complexity here is O(n) and the space complexity is roughly O(n) due to the copying that takes place when dealing with collections and dicts.</p><p>This is a rather well tested algorithm that I have used to great effect to turn object structures into JSON structures among other useful tasks.</p></section></section></section><section class="l-footer"><footer><section class="footer-content"><p class="footer__text">copyright peter m elias 2003 - 2016</p></section></footer></section><button class="js-intercom-cta hidden"></button><script src="/javascript/intercom.js" type="text/javascript"></script></body></html>
